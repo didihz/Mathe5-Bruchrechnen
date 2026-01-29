@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathe 5 - Bruchrechnen Lernpfad</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Spinner-Pfeile bei number inputs entfernen */
+        input[type="text"]::-webkit-outer-spin-button,
+        input[type="text"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="text"] {
+            -moz-appearance: textfield;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            height: 25px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .chapter-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .chapter-title {
+            color: #4f46e5;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #4f46e5;
+            padding-bottom: 10px;
+        }
+
+        .section-title {
+            color: #7c3aed;
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+            padding: 10px 15px;
+            background: #f3e8ff;
+            border-radius: 10px;
+        }
+
+        .task {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4f46e5;
+            display: none;
+        }
+
+        .task.active {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .task h3 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .task p {
+            color: #475569;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .task-number {
+            background: #4f46e5;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        input[type="text"] {
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            width: 80px;
+            margin: 5px;
+            transition: border-color 0.3s;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4f46e5;
+            outline: none;
+        }
+
+        input.wide {
+            width: 120px;
+        }
+
+
+        .check-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .check-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .feedback.correct {
+            background: #dcfce7;
+            color: #166534;
+            display: block;
+            animation: pop 0.3s ease;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn.show {
+            display: inline-block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 8px;
+            font-size: 1.1em;
+        }
+
+        .fraction .numerator {
+            border-bottom: 2px solid #333;
+            padding: 2px 10px;
+        }
+
+        .fraction .denominator {
+            padding: 2px 10px;
+        }
+
+        .fraction-input {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 10px;
+            background: #fff;
+            border: 3px solid #4f46e5;
+            border-radius: 12px;
+            padding: 10px 20px;
+            box-shadow: 0 3px 10px rgba(79, 70, 229, 0.2);
+        }
+
+        .fraction-input input[type="text"] {
+            width: 55px !important;
+            padding: 5px !important;
+            border: none !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            font-size: 1.5em !important;
+            font-weight: bold !important;
+            color: #4f46e5 !important;
+            margin: 0 !important;
+            display: block !important;
+            text-align: center !important;
+        }
+
+        .fraction-input input[type="text"]:focus {
+            background: #eef2ff !important;
+            outline: none !important;
+        }
+
+        .fraction-input input[type="text"]::placeholder {
+            color: #a5b4fc;
+        }
+
+        .fraction-input .frac-line {
+            width: 50px;
+            height: 4px;
+            background: #4f46e5;
+            margin: 5px auto;
+            border-radius: 2px;
+        }
+
+        .visual-fraction {
+            display: inline-flex;
+            gap: 3px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .fraction-piece {
+            width: 35px;
+            height: 35px;
+            border: 2px solid #4f46e5;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .fraction-piece.filled {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .circle-fraction {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #4f46e5;
+            margin: 15px auto;
+            position: relative;
+            overflow: hidden;
+            background: white;
+        }
+
+        .circle-slice {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+        }
+
+        .multiple-choice {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .choice-btn {
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .choice-btn:hover {
+            border-color: #4f46e5;
+            background: #f8fafc;
+        }
+
+        .choice-btn.selected {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .choice-btn.correct-choice {
+            border-color: #22c55e;
+            background: #dcfce7;
+        }
+
+        .choice-btn.wrong-choice {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .hint {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin: 15px 0;
+            font-size: 0.95em;
+            color: #92400e;
+        }
+
+        .formula-box {
+            background: #e0e7ff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 1.1em;
+            text-align: center;
+            color: #3730a3;
+        }
+
+        .example-box {
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .example-box h4 {
+            color: #166534;
+            margin-bottom: 10px;
+        }
+
+        .number-line {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .number-line-track {
+            flex: 1;
+            height: 4px;
+            background: #cbd5e1;
+            position: relative;
+            margin: 0 20px;
+        }
+
+        .number-line-mark {
+            position: absolute;
+            top: -8px;
+            width: 20px;
+            height: 20px;
+            background: #4f46e5;
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .number-line-label {
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .equation {
+            font-size: 1.3em;
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .chapter-complete {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .chapter-complete.show {
+            display: block;
+        }
+
+        .chapter-complete h2 {
+            color: #22c55e;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .star-rating {
+            font-size: 3em;
+            color: #fbbf24;
+            margin: 20px 0;
+        }
+
+        .reset-btn {
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #475569;
+        }
+
+        .pizza-visual {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .pizza {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #fbbf24 0deg,
+                #fbbf24 var(--filled-deg, 0deg),
+                #fef3c7 var(--filled-deg, 0deg),
+                #fef3c7 360deg
+            );
+            border: 3px solid #d97706;
+            position: relative;
+        }
+
+        .bar-visual {
+            display: flex;
+            height: 40px;
+            border: 2px solid #4f46e5;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+            max-width: 400px;
+        }
+
+        .bar-segment {
+            flex: 1;
+            border-right: 1px solid #a5b4fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            color: #4f46e5;
+        }
+
+        .bar-segment:last-child {
+            border-right: none;
+        }
+
+        .bar-segment.filled {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .comparison-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 1.3em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .back-btn {
+            background: #94a3b8;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #64748b;
+        }
+
+        .back-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .chapter-content {
+                padding: 20px;
+            }
+
+            input[type="text"] {
+                width: 60px;
+                padding: 10px;
+            }
+
+            .fraction-piece {
+                width: 28px;
+                height: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Bruchrechnen - Lernpfad</h1>
+            <p>Schritt fur Schritt zum Bruch-Profi!</p>
+            <div class="progress-container">
+                <div class="progress-text">
+                    <span>Fortschritt</span>
+                    <span id="progressLabel">Aufgabe 1 von 25</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="totalProgress" style="width: 0%">0%</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="chapter-content" id="chapter">
+            <h2 class="chapter-title">Kapitel 1: Bruchrechnen</h2>
+
+            <!-- ABSCHNITT 1: BRUCHTEILE ERKENNEN UND VERSTEHEN -->
+
+            <div class="task active" id="task0">
+                <span class="task-number">Aufgabe 1 von 25</span>
+                <h3 class="section-title">Teil A: Bruche verstehen</h3>
+                <h3>Was ist ein Bruch?</h3>
+                <p>Ein Bruch beschreibt einen Teil eines Ganzen. Schau dir das Bild an:</p>
+                <div class="visual-fraction">
+                    <div class="fraction-piece filled">1</div>
+                    <div class="fraction-piece filled">2</div>
+                    <div class="fraction-piece filled">3</div>
+                    <div class="fraction-piece">4</div>
+                    <div class="fraction-piece">5</div>
+                    <div class="fraction-piece">6</div>
+                </div>
+                <p>3 von 6 Teilen sind eingefärbt. Das schreibt man als Bruch:</p>
+                <div class="formula-box">
+                    <span class="fraction"><span class="numerator">Zähler (eingefärbte Teile)</span><span class="denominator">Nenner (alle Teile)</span></span>
+                    = <span class="fraction"><span class="numerator">3</span><span class="denominator">6</span></span>
+                </div>
+                <p><strong>Deine Aufgabe:</strong> Wie viele Teile sind hier eingefärbt?</p>
+                <div class="visual-fraction">
+                    <div class="fraction-piece filled"></div>
+                    <div class="fraction-piece filled"></div>
+                    <div class="fraction-piece"></div>
+                    <div class="fraction-piece"></div>
+                    <div class="fraction-piece"></div>
+                </div>
+                <p>Schreibe den Bruch:
+                    <span class="fraction-input">
+                        <input type="text" id="t0-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t0-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(0)">Überprüfen</button>
+                <div class="feedback" id="feedback-0"></div>
+                <button class="next-btn" id="next-0" onclick="nextTask(0)">Weiter</button>
+            </div>
+
+            <div class="task" id="task1">
+                <span class="task-number">Aufgabe 2 von 25</span>
+                <h3>Bruchteile am Balken erkennen</h3>
+                <p>Der Balken ist in gleiche Teile geteilt. Wie lautet der Bruch für die eingefärbten Teile?</p>
+                <div class="bar-visual">
+                    <div class="bar-segment filled"></div>
+                    <div class="bar-segment filled"></div>
+                    <div class="bar-segment filled"></div>
+                    <div class="bar-segment filled"></div>
+                    <div class="bar-segment"></div>
+                    <div class="bar-segment"></div>
+                    <div class="bar-segment"></div>
+                    <div class="bar-segment"></div>
+                </div>
+                <p>Bruch:
+                    <span class="fraction-input">
+                        <input type="text" id="t1-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t1-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(1)">Überprüfen</button>
+                <div class="feedback" id="feedback-1"></div>
+                <button class="next-btn" id="next-1" onclick="nextTask(1)">Weiter</button>
+            </div>
+
+            <div class="task" id="task2">
+                <span class="task-number">Aufgabe 3 von 25</span>
+                <h3>Bruchteile erkennen - Übung</h3>
+                <p>Wie viele Teile sind eingefärbt?</p>
+                <div class="visual-fraction">
+                    <div class="fraction-piece filled"></div>
+                    <div class="fraction-piece"></div>
+                    <div class="fraction-piece"></div>
+                    <div class="fraction-piece"></div>
+                </div>
+                <p>Bruch:
+                    <span class="fraction-input">
+                        <input type="text" id="t2-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t2-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(2)">Überprüfen</button>
+                <div class="feedback" id="feedback-2"></div>
+                <button class="next-btn" id="next-2" onclick="nextTask(2)">Weiter</button>
+            </div>
+
+            <div class="task" id="task3">
+                <span class="task-number">Aufgabe 4 von 25</span>
+                <h3>Brüche verstehen</h3>
+                <p>Was bedeutet der Bruch <span class="fraction"><span class="numerator">3</span><span class="denominator">4</span></span>?</p>
+                <div class="multiple-choice" id="mc3">
+                    <button class="choice-btn" onclick="selectChoice(3, 0)">3 von 4 gleichen Teilen</button>
+                    <button class="choice-btn" onclick="selectChoice(3, 1)">4 von 3 gleichen Teilen</button>
+                    <button class="choice-btn" onclick="selectChoice(3, 2)">3 mal 4</button>
+                    <button class="choice-btn" onclick="selectChoice(3, 3)">4 minus 3</button>
+                </div>
+                <button class="check-btn" onclick="checkTask(3)">Überprüfen</button>
+                <div class="feedback" id="feedback-3"></div>
+                <button class="next-btn" id="next-3" onclick="nextTask(3)">Weiter</button>
+            </div>
+
+            <div class="task" id="task4">
+                <span class="task-number">Aufgabe 5 von 25</span>
+                <h3>Zähler und Nenner benennen</h3>
+                <p>Beim Bruch <span class="fraction"><span class="numerator">5</span><span class="denominator">8</span></span>:</p>
+                <p>Wie heißt die Zahl oben (5)? <input type="text" id="t4-top" class="wide" placeholder="?"></p>
+                <p>Wie heißt die Zahl unten (8)? <input type="text" id="t4-bottom" class="wide" placeholder="?"></p>
+                <div class="hint">Tipp: Die obere Zahl zählt, die untere benennt die Teile.</div>
+                <button class="check-btn" onclick="checkTask(4)">Überprüfen</button>
+                <div class="feedback" id="feedback-4"></div>
+                <button class="next-btn" id="next-4" onclick="nextTask(4)">Weiter</button>
+            </div>
+
+            <!-- ABSCHNITT 2: BRUCHTEILE BERECHNEN -->
+
+            <div class="task" id="task5">
+                <span class="task-number">Aufgabe 6 von 25</span>
+                <h3 class="section-title">Teil B: Bruchteile berechnen</h3>
+                <h3>Bruchteile von Mengen</h3>
+                <div class="example-box">
+                    <h4>Beispiel:</h4>
+                    <p><span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> von 10 = 10 : 2 = <strong>5</strong></p>
+                    <p>Man teilt durch den Nenner!</p>
+                </div>
+                <p><strong>Berechne:</strong> <span class="fraction"><span class="numerator">1</span><span class="denominator">3</span></span> von 12 = </p>
+                <p>Ergebnis: <input type="text" id="t5-answer" placeholder="?"></p>
+                <button class="check-btn" onclick="checkTask(5)">Überprüfen</button>
+                <div class="feedback" id="feedback-5"></div>
+                <button class="next-btn" id="next-5" onclick="nextTask(5)">Weiter</button>
+            </div>
+
+            <div class="task" id="task6">
+                <span class="task-number">Aufgabe 7 von 25</span>
+                <h3>Bruchteile berechnen</h3>
+                <p>Berechne: <span class="fraction"><span class="numerator">1</span><span class="denominator">4</span></span> von 20 = </p>
+                <p>Ergebnis: <input type="text" id="t6-answer" placeholder="?"></p>
+                <button class="check-btn" onclick="checkTask(6)">Überprüfen</button>
+                <div class="feedback" id="feedback-6"></div>
+                <button class="next-btn" id="next-6" onclick="nextTask(6)">Weiter</button>
+            </div>
+
+            <div class="task" id="task7">
+                <span class="task-number">Aufgabe 8 von 25</span>
+                <h3>Mehrere Bruchteile berechnen</h3>
+                <div class="example-box">
+                    <h4>Beispiel:</h4>
+                    <p><span class="fraction"><span class="numerator">2</span><span class="denominator">5</span></span> von 15:</p>
+                    <p>Schritt 1: 15 : 5 = 3 (ein Fünftel)</p>
+                    <p>Schritt 2: 3 · 2 = <strong>6</strong> (zwei Fünftel)</p>
+                </div>
+                <p><strong>Berechne:</strong> <span class="fraction"><span class="numerator">2</span><span class="denominator">3</span></span> von 18 = </p>
+                <p>Ergebnis: <input type="text" id="t7-answer" placeholder="?"></p>
+                <button class="check-btn" onclick="checkTask(7)">Überprüfen</button>
+                <div class="feedback" id="feedback-7"></div>
+                <button class="next-btn" id="next-7" onclick="nextTask(7)">Weiter</button>
+            </div>
+
+            <div class="task" id="task8">
+                <span class="task-number">Aufgabe 9 von 25</span>
+                <h3>Bruchteile berechnen - Übung</h3>
+                <p>Berechne: <span class="fraction"><span class="numerator">3</span><span class="denominator">4</span></span> von 24 = </p>
+                <div class="hint">Tipp: Erst durch 4 teilen, dann mal 3 nehmen.</div>
+                <p>Ergebnis: <input type="text" id="t8-answer" placeholder="?"></p>
+                <button class="check-btn" onclick="checkTask(8)">Überprüfen</button>
+                <div class="feedback" id="feedback-8"></div>
+                <button class="next-btn" id="next-8" onclick="nextTask(8)">Weiter</button>
+            </div>
+
+            <div class="task" id="task9">
+                <span class="task-number">Aufgabe 10 von 25</span>
+                <h3>Textaufgabe</h3>
+                <p>In einer Klasse sind 28 Schüler. <span class="fraction"><span class="numerator">1</span><span class="denominator">4</span></span> der Schüler tragen eine Brille.</p>
+                <p>Wie viele Schüler tragen eine Brille?</p>
+                <p>Antwort: <input type="text" id="t9-answer" placeholder="?"> Schüler</p>
+                <button class="check-btn" onclick="checkTask(9)">Überprüfen</button>
+                <div class="feedback" id="feedback-9"></div>
+                <button class="next-btn" id="next-9" onclick="nextTask(9)">Weiter</button>
+            </div>
+
+            <!-- ABSCHNITT 3: GLEICHWERTIGE BRÜCHE -->
+
+            <div class="task" id="task10">
+                <span class="task-number">Aufgabe 11 von 25</span>
+                <h3 class="section-title">Teil C: Gleichwertige Bruche</h3>
+                <h3>Erweitern von Brüchen</h3>
+                <div class="formula-box">
+                    Erweitern: Zähler UND Nenner mit der gleichen Zahl multiplizieren.
+                    <br><br>
+                    <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span>
+                    = <span class="fraction"><span class="numerator">1 · 2</span><span class="denominator">2 · 2</span></span>
+                    = <span class="fraction"><span class="numerator">2</span><span class="denominator">4</span></span>
+                </div>
+                <p><strong>Erweitere:</strong> <span class="fraction"><span class="numerator">1</span><span class="denominator">3</span></span> mit 2</p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t10-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t10-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(10)">Überprüfen</button>
+                <div class="feedback" id="feedback-10"></div>
+                <button class="next-btn" id="next-10" onclick="nextTask(10)">Weiter</button>
+            </div>
+
+            <div class="task" id="task11">
+                <span class="task-number">Aufgabe 12 von 25</span>
+                <h3>Erweitern - Übung</h3>
+                <p>Erweitere <span class="fraction"><span class="numerator">2</span><span class="denominator">5</span></span> mit 3</p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t11-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t11-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(11)">Überprüfen</button>
+                <div class="feedback" id="feedback-11"></div>
+                <button class="next-btn" id="next-11" onclick="nextTask(11)">Weiter</button>
+            </div>
+
+            <div class="task" id="task12">
+                <span class="task-number">Aufgabe 13 von 25</span>
+                <h3>Kürzen von Brüchen</h3>
+                <div class="formula-box">
+                    Kürzen: Zähler UND Nenner durch die gleiche Zahl teilen.
+                    <br><br>
+                    <span class="fraction"><span class="numerator">4</span><span class="denominator">8</span></span>
+                    = <span class="fraction"><span class="numerator">4 : 4</span><span class="denominator">8 : 4</span></span>
+                    = <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span>
+                </div>
+                <p><strong>Kürze:</strong> <span class="fraction"><span class="numerator">6</span><span class="denominator">9</span></span> mit 3</p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t12-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t12-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(12)">Überprüfen</button>
+                <div class="feedback" id="feedback-12"></div>
+                <button class="next-btn" id="next-12" onclick="nextTask(12)">Weiter</button>
+            </div>
+
+            <div class="task" id="task13">
+                <span class="task-number">Aufgabe 14 von 25</span>
+                <h3>Kürzen - Übung</h3>
+                <p>Kürze <span class="fraction"><span class="numerator">10</span><span class="denominator">15</span></span> vollständig.</p>
+                <div class="hint">Tipp: Finde die größte Zahl, durch die beide teilbar sind (5).</div>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t13-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t13-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(13)">Überprüfen</button>
+                <div class="feedback" id="feedback-13"></div>
+                <button class="next-btn" id="next-13" onclick="nextTask(13)">Weiter</button>
+            </div>
+
+            <div class="task" id="task14">
+                <span class="task-number">Aufgabe 15 von 25</span>
+                <h3>Gleichwertige Brüche erkennen</h3>
+                <p>Welcher Bruch ist gleichwertig zu <span class="fraction"><span class="numerator">2</span><span class="denominator">4</span></span>?</p>
+                <div class="multiple-choice" id="mc14">
+                    <button class="choice-btn" onclick="selectChoice(14, 0)"><span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span></button>
+                    <button class="choice-btn" onclick="selectChoice(14, 1)"><span class="fraction"><span class="numerator">2</span><span class="denominator">3</span></span></button>
+                    <button class="choice-btn" onclick="selectChoice(14, 2)"><span class="fraction"><span class="numerator">3</span><span class="denominator">4</span></span></button>
+                    <button class="choice-btn" onclick="selectChoice(14, 3)"><span class="fraction"><span class="numerator">1</span><span class="denominator">4</span></span></button>
+                </div>
+                <button class="check-btn" onclick="checkTask(14)">Überprüfen</button>
+                <div class="feedback" id="feedback-14"></div>
+                <button class="next-btn" id="next-14" onclick="nextTask(14)">Weiter</button>
+            </div>
+
+            <!-- ABSCHNITT 4: BRÜCHE UND DEZIMALZAHLEN -->
+
+            <div class="task" id="task15">
+                <span class="task-number">Aufgabe 16 von 25</span>
+                <h3 class="section-title">Teil D: Bruche und Dezimalzahlen</h3>
+                <h3>Bruch in Dezimalzahl umwandeln</h3>
+                <div class="formula-box">
+                    Bruch → Dezimalzahl: Zähler durch Nenner teilen
+                    <br><br>
+                    <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> = 1 : 2 = 0,5
+                </div>
+                <p><strong>Wandle um:</strong> <span class="fraction"><span class="numerator">1</span><span class="denominator">4</span></span> = </p>
+                <p>Ergebnis: <input type="text" id="t15-answer" placeholder="0,?" class="wide"></p>
+                <button class="check-btn" onclick="checkTask(15)">Überprüfen</button>
+                <div class="feedback" id="feedback-15"></div>
+                <button class="next-btn" id="next-15" onclick="nextTask(15)">Weiter</button>
+            </div>
+
+            <div class="task" id="task16">
+                <span class="task-number">Aufgabe 17 von 25</span>
+                <h3>Bruch in Dezimalzahl - Übung</h3>
+                <p>Wandle um: <span class="fraction"><span class="numerator">3</span><span class="denominator">4</span></span> = </p>
+                <div class="hint">Tipp: 3 : 4 = ?</div>
+                <p>Ergebnis: <input type="text" id="t16-answer" placeholder="0,?" class="wide"></p>
+                <button class="check-btn" onclick="checkTask(16)">Überprüfen</button>
+                <div class="feedback" id="feedback-16"></div>
+                <button class="next-btn" id="next-16" onclick="nextTask(16)">Weiter</button>
+            </div>
+
+            <div class="task" id="task17">
+                <span class="task-number">Aufgabe 18 von 25</span>
+                <h3>Dezimalzahl in Bruch umwandeln</h3>
+                <div class="formula-box">
+                    0,5 = <span class="fraction"><span class="numerator">5</span><span class="denominator">10</span></span> = <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span>
+                    <br><br>
+                    Die Nachkommastelle zeigt den Nenner: Zehntel, Hundertstel...
+                </div>
+                <p><strong>Wandle um:</strong> 0,25 = </p>
+                <p>Ergebnis (gekürzt):
+                    <span class="fraction-input">
+                        <input type="text" id="t17-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t17-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(17)">Überprüfen</button>
+                <div class="feedback" id="feedback-17"></div>
+                <button class="next-btn" id="next-17" onclick="nextTask(17)">Weiter</button>
+            </div>
+
+            <div class="task" id="task18">
+                <span class="task-number">Aufgabe 19 von 25</span>
+                <h3>Wichtige Brüche kennen</h3>
+                <p>Ordne zu: Welche Dezimalzahl gehört zu <span class="fraction"><span class="numerator">1</span><span class="denominator">5</span></span>?</p>
+                <div class="multiple-choice" id="mc18">
+                    <button class="choice-btn" onclick="selectChoice(18, 0)">0,2</button>
+                    <button class="choice-btn" onclick="selectChoice(18, 1)">0,5</button>
+                    <button class="choice-btn" onclick="selectChoice(18, 2)">0,15</button>
+                    <button class="choice-btn" onclick="selectChoice(18, 3)">0,25</button>
+                </div>
+                <button class="check-btn" onclick="checkTask(18)">Überprüfen</button>
+                <div class="feedback" id="feedback-18"></div>
+                <button class="next-btn" id="next-18" onclick="nextTask(18)">Weiter</button>
+            </div>
+
+            <!-- ABSCHNITT 5: ADDITION UND SUBTRAKTION -->
+
+            <div class="task" id="task19">
+                <span class="task-number">Aufgabe 20 von 25</span>
+                <h3 class="section-title">Teil E: Bruche addieren und subtrahieren</h3>
+                <h3>Addition mit gleichem Nenner</h3>
+                <div class="formula-box">
+                    Gleicher Nenner: Zähler addieren, Nenner bleibt!
+                    <br><br>
+                    <span class="fraction"><span class="numerator">2</span><span class="denominator">7</span></span> +
+                    <span class="fraction"><span class="numerator">3</span><span class="denominator">7</span></span> =
+                    <span class="fraction"><span class="numerator">2 + 3</span><span class="denominator">7</span></span> =
+                    <span class="fraction"><span class="numerator">5</span><span class="denominator">7</span></span>
+                </div>
+                <p><strong>Berechne:</strong>
+                    <span class="fraction"><span class="numerator">1</span><span class="denominator">5</span></span> +
+                    <span class="fraction"><span class="numerator">2</span><span class="denominator">5</span></span> =
+                </p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t19-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t19-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(19)">Überprüfen</button>
+                <div class="feedback" id="feedback-19"></div>
+                <button class="next-btn" id="next-19" onclick="nextTask(19)">Weiter</button>
+            </div>
+
+            <div class="task" id="task20">
+                <span class="task-number">Aufgabe 21 von 25</span>
+                <h3>Addition - Übung</h3>
+                <p>Berechne:
+                    <span class="fraction"><span class="numerator">3</span><span class="denominator">8</span></span> +
+                    <span class="fraction"><span class="numerator">4</span><span class="denominator">8</span></span> =
+                </p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t20-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t20-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(20)">Überprüfen</button>
+                <div class="feedback" id="feedback-20"></div>
+                <button class="next-btn" id="next-20" onclick="nextTask(20)">Weiter</button>
+            </div>
+
+            <div class="task" id="task21">
+                <span class="task-number">Aufgabe 22 von 25</span>
+                <h3>Subtraktion mit gleichem Nenner</h3>
+                <div class="formula-box">
+                    Gleicher Nenner: Zähler subtrahieren, Nenner bleibt!
+                </div>
+                <p>Berechne:
+                    <span class="fraction"><span class="numerator">5</span><span class="denominator">6</span></span> -
+                    <span class="fraction"><span class="numerator">2</span><span class="denominator">6</span></span> =
+                </p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t21-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t21-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(21)">Überprüfen</button>
+                <div class="feedback" id="feedback-21"></div>
+                <button class="next-btn" id="next-21" onclick="nextTask(21)">Weiter</button>
+            </div>
+
+            <div class="task" id="task22">
+                <span class="task-number">Aufgabe 23 von 25</span>
+                <h3>Subtraktion - Übung</h3>
+                <p>Berechne:
+                    <span class="fraction"><span class="numerator">7</span><span class="denominator">9</span></span> -
+                    <span class="fraction"><span class="numerator">4</span><span class="denominator">9</span></span> =
+                </p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t22-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t22-den" placeholder="?">
+                    </span>
+                </p>
+                <button class="check-btn" onclick="checkTask(22)">Überprüfen</button>
+                <div class="feedback" id="feedback-22"></div>
+                <button class="next-btn" id="next-22" onclick="nextTask(22)">Weiter</button>
+            </div>
+
+            <div class="task" id="task23">
+                <span class="task-number">Aufgabe 24 von 25</span>
+                <h3>Textaufgabe</h3>
+                <p>Lisa hat eine Pizza. Sie isst <span class="fraction"><span class="numerator">2</span><span class="denominator">8</span></span> der Pizza.
+                Dann isst sie noch <span class="fraction"><span class="numerator">3</span><span class="denominator">8</span></span>.</p>
+                <p>Wie viel hat Lisa insgesamt gegessen?</p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t23-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t23-den" placeholder="?">
+                    </span>
+                    der Pizza
+                </p>
+                <button class="check-btn" onclick="checkTask(23)">Überprüfen</button>
+                <div class="feedback" id="feedback-23"></div>
+                <button class="next-btn" id="next-23" onclick="nextTask(23)">Weiter</button>
+            </div>
+
+            <div class="task" id="task24">
+                <span class="task-number">Aufgabe 25 von 25</span>
+                <h3>Abschlussaufgabe</h3>
+                <p>Tom hat <span class="fraction"><span class="numerator">3</span><span class="denominator">4</span></span> eines Kuchens.
+                Er gibt <span class="fraction"><span class="numerator">1</span><span class="denominator">4</span></span> an seine Schwester.</p>
+                <p>Wie viel Kuchen hat Tom noch?</p>
+                <p>Ergebnis:
+                    <span class="fraction-input">
+                        <input type="text" id="t24-num" placeholder="?">
+                        <div class="frac-line"></div>
+                        <input type="text" id="t24-den" placeholder="?">
+                    </span>
+                    des Kuchens
+                </p>
+                <button class="check-btn" onclick="checkTask(24)">Überprüfen</button>
+                <div class="feedback" id="feedback-24"></div>
+                <button class="next-btn" id="next-24" onclick="completeChapter()">Kapitel abschließen</button>
+            </div>
+
+            <!-- ABSCHLUSS -->
+            <div class="chapter-complete" id="complete">
+                <h2>Herzlichen Glückwunsch!</h2>
+                <div class="star-rating">⭐⭐⭐⭐⭐</div>
+                <p style="font-size: 1.2em;">Du hast alle 25 Aufgaben zum Bruchrechnen erfolgreich gelöst!</p>
+                <p style="margin-top: 20px;">Du beherrschst jetzt:</p>
+                <ul style="text-align: left; max-width: 400px; margin: 20px auto; line-height: 2;">
+                    <li>Bruchteile erkennen und verstehen</li>
+                    <li>Bruchteile von Mengen berechnen</li>
+                    <li>Brüche erweitern und kürzen</li>
+                    <li>Brüche in Dezimalzahlen umwandeln</li>
+                    <li>Brüche addieren und subtrahieren</li>
+                </ul>
+                <button class="reset-btn" onclick="resetAll()">Von vorne beginnen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lösungen für alle 25 Aufgaben
+        const solutions = {
+            0: { type: 'fraction', num: 2, den: 5 },
+            1: { type: 'fraction', num: 4, den: 8, altNum: 1, altDen: 2 },
+            2: { type: 'fraction', num: 1, den: 4 },
+            3: { type: 'choice', correct: 0 },
+            4: { type: 'names', top: ['zähler', 'zaehler', 'zäler', 'zaeler'], bottom: ['nenner'] },
+            5: { type: 'number', answer: 4 },
+            6: { type: 'number', answer: 5 },
+            7: { type: 'number', answer: 12 },
+            8: { type: 'number', answer: 18 },
+            9: { type: 'number', answer: 7 },
+            10: { type: 'fraction', num: 2, den: 6, altNum: 1, altDen: 3 },
+            11: { type: 'fraction', num: 6, den: 15, altNum: 2, altDen: 5 },
+            12: { type: 'fraction', num: 2, den: 3 },
+            13: { type: 'fraction', num: 2, den: 3 },
+            14: { type: 'choice', correct: 0 },
+            15: { type: 'decimal', answers: ['0,25', '0.25'] },
+            16: { type: 'decimal', answers: ['0,75', '0.75'] },
+            17: { type: 'fraction', num: 1, den: 4 },
+            18: { type: 'choice', correct: 0 },
+            19: { type: 'fraction', num: 3, den: 5 },
+            20: { type: 'fraction', num: 7, den: 8 },
+            21: { type: 'fraction', num: 3, den: 6, altNum: 1, altDen: 2 },
+            22: { type: 'fraction', num: 3, den: 9, altNum: 1, altDen: 3 },
+            23: { type: 'fraction', num: 5, den: 8 },
+            24: { type: 'fraction', num: 2, den: 4, altNum: 1, altDen: 2 }
+        };
+
+        const totalTasks = 25;
+        let currentTask = 0;
+        let selectedChoices = {};
+
+        // Laden des Fortschritts
+        function loadProgress() {
+            const saved = localStorage.getItem('bruchrechnenProgress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                currentTask = data.currentTask || 0;
+                if (currentTask >= totalTasks) {
+                    showComplete();
+                } else {
+                    showTask(currentTask);
+                }
+                updateProgress();
+            }
+        }
+
+        // Speichern des Fortschritts
+        function saveProgress() {
+            localStorage.setItem('bruchrechnenProgress', JSON.stringify({
+                currentTask: currentTask
+            }));
+        }
+
+        // Fortschrittsanzeige aktualisieren
+        function updateProgress() {
+            const percentage = Math.round((currentTask / totalTasks) * 100);
+            const progressFill = document.getElementById('totalProgress');
+            progressFill.style.width = percentage + '%';
+            progressFill.textContent = percentage + '%';
+
+            const label = document.getElementById('progressLabel');
+            if (currentTask < totalTasks) {
+                label.textContent = `Aufgabe ${currentTask + 1} von ${totalTasks}`;
+            } else {
+                label.textContent = 'Alle Aufgaben gelöst!';
+            }
+        }
+
+        // Aufgabe anzeigen
+        function showTask(index) {
+            document.querySelectorAll('.task').forEach(t => t.classList.remove('active'));
+            const task = document.getElementById('task' + index);
+            if (task) {
+                task.classList.add('active');
+            }
+            updateProgress();
+        }
+
+        // Multiple Choice Auswahl
+        function selectChoice(task, choice) {
+            selectedChoices[task] = choice;
+            const container = document.getElementById('mc' + task);
+            if (container) {
+                container.querySelectorAll('.choice-btn').forEach((btn, i) => {
+                    btn.classList.remove('selected');
+                    if (i === choice) {
+                        btn.classList.add('selected');
+                    }
+                });
+            }
+        }
+
+        // Aufgabe überprüfen
+        function checkTask(taskIndex) {
+            const solution = solutions[taskIndex];
+            const feedback = document.getElementById('feedback-' + taskIndex);
+            const nextBtn = document.getElementById('next-' + taskIndex);
+            let correct = false;
+
+            switch (solution.type) {
+                case 'fraction':
+                    const numEl = document.getElementById('t' + taskIndex + '-num');
+                    const denEl = document.getElementById('t' + taskIndex + '-den');
+                    const num = parseInt(numEl.value);
+                    const den = parseInt(denEl.value);
+
+                    if (!isNaN(num) && !isNaN(den) && den !== 0) {
+                        // Prüfe exakte Übereinstimmung
+                        correct = (num === solution.num && den === solution.den);
+                        // Prüfe alternative Antwort
+                        if (!correct && solution.altNum !== undefined) {
+                            correct = (num === solution.altNum && den === solution.altDen);
+                        }
+                        // Prüfe gleichwertige Brüche
+                        if (!correct) {
+                            correct = (num / den === solution.num / solution.den);
+                        }
+                    }
+                    break;
+
+                case 'number':
+                    const answer = parseFloat(document.getElementById('t' + taskIndex + '-answer').value);
+                    correct = (answer === solution.answer);
+                    break;
+
+                case 'decimal':
+                    const decAnswer = document.getElementById('t' + taskIndex + '-answer').value.trim();
+                    correct = solution.answers.includes(decAnswer);
+                    break;
+
+                case 'names':
+                    const topAnswer = document.getElementById('t' + taskIndex + '-top').value.trim().toLowerCase();
+                    const bottomAnswer = document.getElementById('t' + taskIndex + '-bottom').value.trim().toLowerCase();
+                    const topCorrect = solution.top.includes(topAnswer);
+                    const bottomCorrect = solution.bottom.includes(bottomAnswer);
+                    correct = topCorrect && bottomCorrect;
+                    break;
+
+                case 'choice':
+                    const selected = selectedChoices[taskIndex];
+                    correct = (selected === solution.correct);
+
+                    const container = document.getElementById('mc' + taskIndex);
+                    if (container) {
+                        container.querySelectorAll('.choice-btn').forEach((btn, i) => {
+                            btn.classList.remove('correct-choice', 'wrong-choice');
+                            if (i === solution.correct) {
+                                btn.classList.add('correct-choice');
+                            } else if (i === selected && !correct) {
+                                btn.classList.add('wrong-choice');
+                            }
+                        });
+                    }
+                    break;
+            }
+
+            feedback.classList.remove('correct', 'incorrect');
+
+            if (correct) {
+                feedback.textContent = 'Richtig! Sehr gut gemacht!';
+                feedback.classList.add('correct');
+                nextBtn.classList.add('show');
+            } else {
+                feedback.textContent = 'Leider nicht richtig. Versuche es noch einmal!';
+                feedback.classList.add('incorrect');
+                nextBtn.classList.remove('show');
+            }
+        }
+
+        // Zur nächsten Aufgabe
+        function nextTask(taskIndex) {
+            currentTask = taskIndex + 1;
+            saveProgress();
+            showTask(currentTask);
+        }
+
+        // Kapitel abschließen
+        function completeChapter() {
+            currentTask = totalTasks;
+            saveProgress();
+            showComplete();
+        }
+
+        // Abschluss-Screen anzeigen
+        function showComplete() {
+            document.querySelectorAll('.task').forEach(t => t.classList.remove('active'));
+            document.getElementById('complete').classList.add('show');
+            updateProgress();
+        }
+
+        // Alles zurücksetzen
+        function resetAll() {
+            localStorage.removeItem('bruchrechnenProgress');
+            currentTask = 0;
+            selectedChoices = {};
+
+            // Alle Eingaben leeren
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = '';
+            });
+
+            // Alle Feedbacks zurücksetzen
+            document.querySelectorAll('.feedback').forEach(fb => {
+                fb.classList.remove('correct', 'incorrect');
+                fb.textContent = '';
+            });
+
+            // Alle Next-Buttons verstecken
+            document.querySelectorAll('.next-btn').forEach(btn => {
+                btn.classList.remove('show');
+            });
+
+            // Choice-Buttons zurücksetzen
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.classList.remove('selected', 'correct-choice', 'wrong-choice');
+            });
+
+            // Abschluss verstecken
+            document.getElementById('complete').classList.remove('show');
+
+            // Erste Aufgabe anzeigen
+            showTask(0);
+        }
+
+        // Initialisierung
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+        });
+    </script>
+</body>
+</html>
